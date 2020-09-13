@@ -21,6 +21,16 @@ def favouritesLoad():
     jobs = Job.query.all()
     return render_template("favourites.html", jobs=jobs)
 
+@app.route('/save/<string:id>')
+def saveFavourite():
+    Job.query.filter_by(id=id).first().update({'notes': "Hello"})
+    return 
+
+@app.route('/favourites/<string:id>')
+def findFav(id):
+    job = Job.query.filter_by(id=id).first()
+    return {'company': job.company, 'img': job.imgUrl, 'title': job.title, 'location': job.location, 'jobType': job.jobType, 'description': job.description, 'url': job.url, 'notes': job.notes}, 200
+
 # add selected favorite to the database
 @app.route('/addFavourite', methods=['POST']) 
 def addFavourite():
@@ -28,7 +38,7 @@ def addFavourite():
     # get the request data
     data = json.loads(request.data.decode('utf-8'))
     # create job
-    new_job = Job(id=data['id'], company=data['company'], imgUrl=data['img'], title=data['title'], location=data['location'], jobType=data['type'], description=data['description'])
+    new_job = Job(id=data['id'], company=data['company'], imgUrl=data['img'], title=data['title'], location=data['location'], jobType=data['type'], description=data['description'], url=data['url'], notes = "")
 
     # check if job is already favourited
     job = Job.query.filter_by(id=data['id']).first()
@@ -40,7 +50,6 @@ def addFavourite():
         db.session.add(new_job)
         db.session.commit()
 
-    # response = app.response_class(response=json.dumps(responseData), status=200, mimetype='application/json')
     return responseData, 200
 
 

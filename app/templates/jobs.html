@@ -141,6 +141,7 @@
           }
           newDescription += description[WORD_LIMIT] + "...";
         }
+        res[index].description = newDescription;
         // set all the values in the modal
         document.getElementById("viewModalLabel").innerHTML = res[index].company;
         document.getElementById("companyimg").src = res[index].company_logo;
@@ -168,6 +169,7 @@
           location: added.location,
           type: added.type,
           description: added.description.substring(0,10000),
+          url: added.url,
         }
 
         const addStatus = await fetch('/addFavourite', {

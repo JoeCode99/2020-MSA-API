@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
   </head>
-  <body style="background-color: #343a40 !important" onload='getJobs("", "")'>
+  <body style="background-color: #343a40 !important">
     {% include "header.html" %}
     <div class="text-center">
       <div class="container">
@@ -23,11 +23,11 @@
             <input type="text" class="form-control" id="jobtitle" style="margin-right: 10px !important" placeholder="Job title">
             <span class="input-group-btn">
               <!-- query API with the following paramters -->
-              <button type="button" class="btn btn-info" onClick='getJobs(document.getElementById("location").value, document.getElementById("jobtitle").value)'>Submit</button>
+              <button type="button" class="btn btn-info">Submit</button>
             </span>
           </div>
         </form>
-        <!-- table to display jobs -->
+        <!-- table to display favourites -->
         <table class="table table-striped text-white" style="margin-top: 10px !important" id="jobstable">
           <thead>
             <tr>
@@ -37,7 +37,17 @@
               <th scope="col" class="text-white">Actions</th>
             </tr>
           </thead>
-          <!-- table populated by js script -->
+          <!-- table populated by JS script -->
+          <tbody>
+            {% for job in jobs %}
+            <tr>
+              <td>{{job.company}}</td>
+              <td>{{job.location}}</td>
+              <td>{{job.title}}</td>
+              <td><button class="btn btn-success" id="{{job.id}}" data-toggle="modal" data-target="#viewFavouriteModal" onClick='{handleView(this)}'>View</button></td>
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
       </div>
     </div>
@@ -60,129 +70,24 @@
     ></script>
 
     <script>
-      // method to get all the jobs according to user filters
-      let res;
-      let selected_index = 0;
-      async function getJobs(location, language) {
-        const jobstable = document.getElementById('jobstable');
-        let tablesize = jobstable.rows.length;
-
-        // first, clear all the old entries from the table
-        while (tablesize > 1) {
-          jobstable.deleteRow(--tablesize);
-        }
-
-        // set cells to display loading...
-        let row = jobstable.insertRow(1);
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
-        cell1.innerHTML = "Loading...";
-        cell2.innerHTML = "Loading...";
-        cell3.innerHTML = "Loading...";
-        cell4.innerHTML = "Loading...";
-
-        if (language.length == 0 && location.length == 0) {
-          res = await fetch("https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json").then(res => res.json());
-        } else if (location.length == 0) {
-          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?description=${language}`).then(res => res.json());
-        } else if (language.length == 0) {
-          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?location=${location}`).then(res => res.json());
-        } else {
-          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?description=${language}&location=${location}`).then(res => res.json());
-        }
-
-        // fill up the table with new information
-        for (let i = 0; i < res.length; i++) {
-          let row = jobstable.insertRow(i+1);
-          var cell1 = row.insertCell(0);
-          var cell2 = row.insertCell(1);
-          var cell3 = row.insertCell(2);
-          var cell4 = row.insertCell(3);
-
-          var button = document.createElement('BUTTON');
-          button.setAttribute("id", `button_${i}`);
-          button.classList.add("btn", "btn-success");
-          // set attributes to open modal on click
-          button.setAttribute("data-toggle", "modal");
-          button.setAttribute("data-target", "#viewModal");
-          button.innerHTML = "View";
-          // setting a listener to handle the button click
-          button.setAttribute('onclick', `handleView(${i})`);
-
-          cell1.innerHTML = res[i].company;
-          cell2.innerHTML = res[i].location.charAt(0).toUpperCase() + res[i].location.slice(1);
-          cell3.innerHTML = res[i].title;
-          cell4.appendChild(button);
-        }
-
-        tablesize = jobstable.rows.length;
-        jobstable.deleteRow(--tablesize);
-
-        // tell user that no results were found
-        if (res.length == 0) {
-          window.alert("No results found! Try some different search filters.");
-        }
-      }
-
       // populate modal with data on button click
-      function handleView(index) {
-        selected_index = index;
-        // limit the number of words in the description
-        const WORD_LIMIT = 160;
-        let description = res[index].description;
-        let newDescription = description;
-        if (description.length > WORD_LIMIT) {
-          newDescription = "";
-          description = description.split(" ");
-          for (let i = 0; i < WORD_LIMIT; i++) {
-            newDescription += description[i] + " ";
-          }
-          newDescription += description[WORD_LIMIT] + "...";
-        }
-        // set all the values in the modal
-        document.getElementById("viewModalLabel").innerHTML = res[index].company;
-        document.getElementById("companyimg").src = res[index].company_logo;
-        document.getElementById("modaljobtitle").innerHTML = res[index].title;
-        document.getElementById("modallocation").innerHTML = res[index].location;
-        document.getElementById("modaltype").innerHTML = res[index].type;
-        document.getElementById("modaldescription").innerHTML = newDescription;
-        document.getElementById("modalurl").innerHTML = `Read more <a href="${res[index].url}">here</a>`;
+      let currFav = 0;
+      async function handleView(element) {
+        currFav = element.id;
+
+        const res = await fetch(`/favourites/${element.id}`).then(resp => resp.json());
+        console.log(res);
+
+        document.getElementById('viewFavouriteModalLabel').innerHTML = res.company;
+        document.getElementById('favcompanyimg').src = res.img;
+        document.getElementById('modalfavjobtitle').innerHTML = res.title;
+        document.getElementById('modalfavlocation').innerHTML = res.location;
+        document.getElementById('modalfavtype').innerHTML = res.jobType;
+        document.getElementById("modalfavdescription").innerHTML = res.description;
+        document.getElementById("favmodalurl").innerHTML = `Read more <a href="${res.url}">here</a>`;
+        document.getElementById("favnotes").value = res.notes;
       }
 
-      // handle adding the selected job to our favorites list
-      async function addFavourite() {
-        const added = res[selected_index];
-
-        // get all the data we need to store
-        const data = {
-          id: added.id,
-          company: added.company,
-          img: added.company_logo,
-          title: added.title,
-          location: added.location,
-          type: added.type,
-          description: added.description.substring(0,10000),
-        }
-
-        const addStatus = await fetch('/addFavourite', {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }).then(resp => resp.json());
-        
-        if (addStatus.message === "Already favourited!") {
-          window.alert(addStatus.message);
-        } else {
-          const modalButton = document.getElementById('modalbutton');
-          modalButton.innerHTML = 'Added!';
-          modalButton.className = "";
-          modalButton.classList.add('btn', 'btn-info', 'text-white');
-        }
-      }
     </script>
   </body>
 </html>
