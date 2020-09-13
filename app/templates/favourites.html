@@ -12,13 +12,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
   </head>
-  <body style="background-color: #343a40 !important" onLoad='setPlaceholder()'>
+  <body style="background-color: #343a40 !important" onLoad="setPlaceholder()">
     {% include "header.html" %}
     <div class="text-center">
       <div class="container">
         <h1 class="cover-heading text-white text-left">Your Favourites</h1>
         <!-- table to display favourites -->
-        <table class="table table-striped text-white" style="margin-top: 10px !important" id="jobstable">
+        <table
+          class="table table-striped text-white"
+          style="margin-top: 10px !important"
+          id="jobstable"
+        >
           <thead>
             <tr>
               <th scope="col" class="text-white">Company Name</th>
@@ -34,7 +38,17 @@
               <td>{{job.company}}</td>
               <td>{{job.location}}</td>
               <td>{{job.title}}</td>
-              <td><button class="btn btn-success" id="{{job.id}}" data-toggle="modal" data-target="#viewFavouriteModal" onClick='{handleView(this)}'>View</button></td>
+              <td>
+                <button
+                  class="btn btn-success"
+                  id="{{job.id}}"
+                  data-toggle="modal"
+                  data-target="#viewFavouriteModal"
+                  onClick="{handleView(this)}"
+                >
+                  View
+                </button>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -71,10 +85,10 @@
           var cell2 = row.insertCell(1);
           var cell3 = row.insertCell(2);
           var cell4 = row.insertCell(3);
-          cell1.innerHTML = "Add some favourites!";
-          cell2.innerHTML = " ";
-          cell3.innerHTML = " ";
-          cell4.innerHTML = " ";
+          cell1.innerHTML = 'Add some favourites!';
+          cell2.innerHTML = ' ';
+          cell3.innerHTML = ' ';
+          cell4.innerHTML = ' ';
         } else {
           table.deleteRow(table.rows.length);
           placeholder = false;
@@ -86,33 +100,45 @@
       async function handleView(element) {
         currFav = element.id;
 
-        const res = await fetch(`/favourites/${element.id}`).then(resp => resp.json());
+        const res = await fetch(`/favourites/${element.id}`).then((resp) =>
+          resp.json()
+        );
 
-        document.getElementById('viewFavouriteModalLabel').innerHTML = res.company;
+        document.getElementById('viewFavouriteModalLabel').innerHTML =
+          res.company;
         document.getElementById('favcompanyimg').src = res.img;
         document.getElementById('modalfavjobtitle').innerHTML = res.title;
         document.getElementById('modalfavlocation').innerHTML = res.location;
         document.getElementById('modalfavtype').innerHTML = res.jobType;
-        document.getElementById("modalfavdescription").innerHTML = res.description;
-        document.getElementById("favmodalurl").innerHTML = `Read more <a href="${res.url}">here</a>`;
-        document.getElementById("favnotes").value = res.notes;
+        document.getElementById('modalfavdescription').innerHTML =
+          res.description;
+        document.getElementById(
+          'favmodalurl'
+        ).innerHTML = `Read more <a href="${res.url}">here</a>`;
+        document.getElementById('favnotes').value = res.notes;
       }
 
       // handle updating the notes of a favourite job
       async function handleSave() {
         const res = await fetch(`/save/${currFav}`, {
           method: 'POST',
-          body: JSON.stringify({'notes': document.getElementById("favnotes").value})
-        }).then(resp => resp.json());
+          body: JSON.stringify({
+            notes: document.getElementById('favnotes').value,
+          }),
+        }).then((resp) => resp.json());
 
-        window.alert(res.message === "Success!" ? "Saved successfully!" : "An error occurred, please try again!");
+        window.alert(
+          res.message === 'Success!'
+            ? 'Saved successfully!'
+            : 'An error occurred, please try again!'
+        );
       }
 
       // handle removing a favourite job
       async function handleRemove() {
         const res = await fetch(`/save/${currFav}`, {
-          method: 'DELETE'
-        }).then(resp => resp.json());
+          method: 'DELETE',
+        }).then((resp) => resp.json());
 
         location.reload();
       }

@@ -19,16 +19,38 @@
         <h1 class="cover-heading text-white text-left">Find Jobs</h1>
         <form class="text-left w-50">
           <div class="input-group">
-            <input type="text" class="form-control" id="location" style="margin-right: 10px !important" placeholder="Location">
-            <input type="text" class="form-control" id="jobtitle" style="margin-right: 10px !important" placeholder="Job title">
+            <input
+              type="text"
+              class="form-control"
+              id="location"
+              style="margin-right: 10px !important"
+              placeholder="Location"
+            />
+            <input
+              type="text"
+              class="form-control"
+              id="jobtitle"
+              style="margin-right: 10px !important"
+              placeholder="Job title"
+            />
             <span class="input-group-btn">
               <!-- query API with the following paramters -->
-              <button type="button" class="btn btn-info" onClick='getJobs(document.getElementById("location").value, document.getElementById("jobtitle").value)'>Submit</button>
+              <button
+                type="button"
+                class="btn btn-info"
+                onClick='getJobs(document.getElementById("location").value, document.getElementById("jobtitle").value)'
+              >
+                Submit
+              </button>
             </span>
           </div>
         </form>
         <!-- table to display jobs -->
-        <table class="table table-striped text-white" style="margin-top: 10px !important" id="jobstable">
+        <table
+          class="table table-striped text-white"
+          style="margin-top: 10px !important"
+          id="jobstable"
+        >
           <thead>
             <tr>
               <th scope="col" class="text-white">Company Name</th>
@@ -78,41 +100,50 @@
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
         var cell4 = row.insertCell(3);
-        cell1.innerHTML = "Loading...";
-        cell2.innerHTML = "Loading...";
-        cell3.innerHTML = "Loading...";
-        cell4.innerHTML = "Loading...";
+        cell1.innerHTML = 'Loading...';
+        cell2.innerHTML = 'Loading...';
+        cell3.innerHTML = 'Loading...';
+        cell4.innerHTML = 'Loading...';
 
         if (language.length == 0 && location.length == 0) {
-          res = await fetch("https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json").then(res => res.json());
+          res = await fetch(
+            'https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json'
+          ).then((res) => res.json());
         } else if (location.length == 0) {
-          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?description=${language}`).then(res => res.json());
+          res = await fetch(
+            `https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?description=${language}`
+          ).then((res) => res.json());
         } else if (language.length == 0) {
-          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?location=${location}`).then(res => res.json());
+          res = await fetch(
+            `https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?location=${location}`
+          ).then((res) => res.json());
         } else {
-          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?description=${language}&location=${location}`).then(res => res.json());
+          res = await fetch(
+            `https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?description=${language}&location=${location}`
+          ).then((res) => res.json());
         }
 
         // fill up the table with new information
         for (let i = 0; i < res.length; i++) {
-          let row = jobstable.insertRow(i+1);
+          let row = jobstable.insertRow(i + 1);
           var cell1 = row.insertCell(0);
           var cell2 = row.insertCell(1);
           var cell3 = row.insertCell(2);
           var cell4 = row.insertCell(3);
 
           var button = document.createElement('BUTTON');
-          button.setAttribute("id", `button_${i}`);
-          button.classList.add("btn", "btn-success");
+          button.setAttribute('id', `button_${i}`);
+          button.classList.add('btn', 'btn-success');
           // set attributes to open modal on click
-          button.setAttribute("data-toggle", "modal");
-          button.setAttribute("data-target", "#viewModal");
-          button.innerHTML = "View";
+          button.setAttribute('data-toggle', 'modal');
+          button.setAttribute('data-target', '#viewModal');
+          button.innerHTML = 'View';
           // setting a listener to handle the button click
           button.setAttribute('onclick', `handleView(${i})`);
 
           cell1.innerHTML = res[i].company;
-          cell2.innerHTML = res[i].location.charAt(0).toUpperCase() + res[i].location.slice(1);
+          cell2.innerHTML =
+            res[i].location.charAt(0).toUpperCase() + res[i].location.slice(1);
           cell3.innerHTML = res[i].title;
           cell4.appendChild(button);
         }
@@ -122,7 +153,7 @@
 
         // tell user that no results were found
         if (res.length == 0) {
-          window.alert("No results found! Try some different search filters.");
+          window.alert('No results found! Try some different search filters.');
         }
       }
 
@@ -134,26 +165,30 @@
         let description = res[index].description;
         let newDescription = description;
         if (description.length > WORD_LIMIT) {
-          newDescription = "";
-          description = description.split(" ");
+          newDescription = '';
+          description = description.split(' ');
           for (let i = 0; i < WORD_LIMIT; i++) {
-            newDescription += description[i] + " ";
+            newDescription += description[i] + ' ';
           }
-          newDescription += description[WORD_LIMIT] + "...";
+          newDescription += description[WORD_LIMIT] + '...';
         }
         res[index].description = newDescription;
         // set all the values in the modal
-        document.getElementById("viewModalLabel").innerHTML = res[index].company;
-        document.getElementById("companyimg").src = res[index].company_logo;
-        document.getElementById("modaljobtitle").innerHTML = res[index].title;
-        document.getElementById("modallocation").innerHTML = res[index].location;
-        document.getElementById("modaltype").innerHTML = res[index].type;
-        document.getElementById("modaldescription").innerHTML = newDescription;
+        document.getElementById('viewModalLabel').innerHTML =
+          res[index].company;
+        document.getElementById('companyimg').src = res[index].company_logo;
+        document.getElementById('modaljobtitle').innerHTML = res[index].title;
+        document.getElementById('modallocation').innerHTML =
+          res[index].location;
+        document.getElementById('modaltype').innerHTML = res[index].type;
+        document.getElementById('modaldescription').innerHTML = newDescription;
         modalButton = document.getElementById('modalbutton');
         modalButton.innerHTML = 'Favorite';
-        modalButton.className = "";
+        modalButton.className = '';
         modalButton.classList.add('btn', 'btn-warning', 'text-white');
-        document.getElementById("modalurl").innerHTML = `Read more <a href="${res[index].url}">here</a>`;
+        document.getElementById(
+          'modalurl'
+        ).innerHTML = `Read more <a href="${res[index].url}">here</a>`;
       }
 
       // handle adding the selected job to our favorites list
@@ -168,24 +203,24 @@
           title: added.title,
           location: added.location,
           type: added.type,
-          description: added.description.substring(0,10000),
+          description: added.description.substring(0, 10000),
           url: added.url,
-        }
+        };
 
         const addStatus = await fetch('/addFavourite', {
-          method: "POST",
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
-        }).then(resp => resp.json());
-        
-        if (addStatus.message === "Already favourited!") {
+        }).then((resp) => resp.json());
+
+        if (addStatus.message === 'Already favourited!') {
           window.alert(addStatus.message);
         } else {
           const modalButton = document.getElementById('modalbutton');
           modalButton.innerHTML = 'Added!';
-          modalButton.className = "";
+          modalButton.className = '';
           modalButton.classList.add('btn', 'btn-info', 'text-white');
         }
       }
