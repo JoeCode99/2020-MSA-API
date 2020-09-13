@@ -1,16 +1,18 @@
+<!-- modal for viewing a job -->
 <div
   class="modal fade"
-  id="newItemModal"
+  id="viewModal"
   data-backdrop="static"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="newItemModalLabel"
+  aria-labelledby="viewModalLabel"
   aria-hidden="true"
 >
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="newItemModalLabel">Add New Item</h5>
+        <img id="companyimg" alt="company-logo" style="height: 50px;"/>
+        <h4 class="modal-title" id="viewModalLabel" style="margin-top: 7px; margin-left: 5px;"></h4>
         <button
           type="button"
           class="close"
@@ -21,6 +23,22 @@
         </button>
       </div>
       <div class="modal-body">
+          <h6>Job Title</h6>
+          <p id="modaljobtitle"></p>
+          <h6>Location</h6>
+          <p id="modallocation"></p>
+          <h6>Type</h6>
+          <p id="modaltype"></p>
+          <h6>Description</h6>
+          <p id="modaldescription"></p>
+          <h6 id="modalurl"></h6>
+          <button type="submit" id="modalbutton" class="btn btn-warning text-white" onClick="addFavourite()">Favorite</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
         <form action="/task/" method="post">
           <div class="form-group">
             <label for="itemName">Task Name</label>
@@ -41,12 +59,7 @@
               rows="3"
             ></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+        -->
 
 <!-- Modal for Deleting a Task -->
 <div

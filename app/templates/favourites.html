@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- bootstrap import -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+  </head>
+  <body style="background-color: #343a40 !important" onload='getJobs("", "")'>
+    {% include "header.html" %}
+    <div class="text-center">
+      <div class="container">
+        <h1 class="cover-heading text-white text-left">Your Favourites</h1>
+        <form class="text-left w-50">
+          <div class="input-group">
+            <input type="text" class="form-control" id="location" style="margin-right: 10px !important" placeholder="Location">
+            <input type="text" class="form-control" id="jobtitle" style="margin-right: 10px !important" placeholder="Job title">
+            <span class="input-group-btn">
+              <!-- query API with the following paramters -->
+              <button type="button" class="btn btn-info" onClick='getJobs(document.getElementById("location").value, document.getElementById("jobtitle").value)'>Submit</button>
+            </span>
+          </div>
+        </form>
+        <!-- table to display jobs -->
+        <table class="table table-striped text-white" style="margin-top: 10px !important" id="jobstable">
+          <thead>
+            <tr>
+              <th scope="col" class="text-white">Company Name</th>
+              <th scope="col" class="text-white">Location</th>
+              <th scope="col" class="text-white">Job Title</th>
+              <th scope="col" class="text-white">Actions</th>
+            </tr>
+          </thead>
+          <!-- table populated by js script -->
+        </table>
+      </div>
+    </div>
+    {% include "modals.html" %}
+    <!-- javascript support for bootstrap -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // method to get all the jobs according to user filters
+      let res;
+      let selected_index = 0;
+      async function getJobs(location, language) {
+        const jobstable = document.getElementById('jobstable');
+        let tablesize = jobstable.rows.length;
+
+        // first, clear all the old entries from the table
+        while (tablesize > 1) {
+          jobstable.deleteRow(--tablesize);
+        }
+
+        // set cells to display loading...
+        let row = jobstable.insertRow(1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        cell1.innerHTML = "Loading...";
+        cell2.innerHTML = "Loading...";
+        cell3.innerHTML = "Loading...";
+        cell4.innerHTML = "Loading...";
+
+        if (language.length == 0 && location.length == 0) {
+          res = await fetch("https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json").then(res => res.json());
+        } else if (location.length == 0) {
+          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?description=${language}`).then(res => res.json());
+        } else if (language.length == 0) {
+          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?location=${location}`).then(res => res.json());
+        } else {
+          res = await fetch(`https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json?description=${language}&location=${location}`).then(res => res.json());
+        }
+
+        // fill up the table with new information
+        for (let i = 0; i < res.length; i++) {
+          let row = jobstable.insertRow(i+1);
+          var cell1 = row.insertCell(0);
+          var cell2 = row.insertCell(1);
+          var cell3 = row.insertCell(2);
+          var cell4 = row.insertCell(3);
+
+          var button = document.createElement('BUTTON');
+          button.setAttribute("id", `button_${i}`);
+          button.classList.add("btn", "btn-success");
+          // set attributes to open modal on click
+          button.setAttribute("data-toggle", "modal");
+          button.setAttribute("data-target", "#viewModal");
+          button.innerHTML = "View";
+          // setting a listener to handle the button click
+          button.setAttribute('onclick', `handleView(${i})`);
+
+          cell1.innerHTML = res[i].company;
+          cell2.innerHTML = res[i].location.charAt(0).toUpperCase() + res[i].location.slice(1);
+          cell3.innerHTML = res[i].title;
+          cell4.appendChild(button);
+        }
+
+        tablesize = jobstable.rows.length;
+        jobstable.deleteRow(--tablesize);
+
+        // tell user that no results were found
+        if (res.length == 0) {
+          window.alert("No results found! Try some different search filters.");
+        }
+      }
+
+      // populate modal with data on button click
+      function handleView(index) {
+        selected_index = index;
+        // limit the number of words in the description
+        const WORD_LIMIT = 160;
+        let description = res[index].description;
+        let newDescription = description;
+        if (description.length > WORD_LIMIT) {
+          newDescription = "";
+          description = description.split(" ");
+          for (let i = 0; i < WORD_LIMIT; i++) {
+            newDescription += description[i] + " ";
+          }
+          newDescription += description[WORD_LIMIT] + "...";
+        }
+        // set all the values in the modal
+        document.getElementById("viewModalLabel").innerHTML = res[index].company;
+        document.getElementById("companyimg").src = res[index].company_logo;
+        document.getElementById("modaljobtitle").innerHTML = res[index].title;
+        document.getElementById("modallocation").innerHTML = res[index].location;
+        document.getElementById("modaltype").innerHTML = res[index].type;
+        document.getElementById("modaldescription").innerHTML = newDescription;
+        document.getElementById("modalurl").innerHTML = `Read more <a href="${res[index].url}">here</a>`;
+      }
+
+      // handle adding the selected job to our favorites list
+      async function addFavourite() {
+        const added = res[selected_index];
+
+        // get all the data we need to store
+        const data = {
+          id: added.id,
+          company: added.company,
+          img: added.company_logo,
+          title: added.title,
+          location: added.location,
+          type: added.type,
+          description: added.description.substring(0,10000),
+        }
+
+        const addStatus = await fetch('/addFavourite', {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }).then(resp => resp.json());
+        
+        if (addStatus.message === "Already favourited!") {
+          window.alert(addStatus.message);
+        } else {
+          const modalButton = document.getElementById('modalbutton');
+          modalButton.innerHTML = 'Added!';
+          modalButton.className = "";
+          modalButton.classList.add('btn', 'btn-info', 'text-white');
+        }
+      }
+    </script>
+  </body>
+</html>

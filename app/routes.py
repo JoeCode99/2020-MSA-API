@@ -1,14 +1,47 @@
 from app import app, models, db
 from flask import render_template, request, redirect, url_for, jsonify
+import requests
+import json
 
-Task = models.Task
+Job = models.Job
 
 
 @app.route('/')
 def index():
-    title = 'My Personal Todo Application!'
-    tasks = Task.query.all()
-    return render_template("index.html", title=title, tasks=tasks)
+    title = 'CoderFinder'
+    return render_template("index.html", title=title)
+
+
+@app.route('/jobs')
+def eventLoad():
+    return render_template("jobs.html")
+
+@app.route('/favourites')
+def favouritesLoad():
+    jobs = Job.query.all()
+    return render_template("favourites.html", jobs=jobs)
+
+# add selected favorite to the database
+@app.route('/addFavourite', methods=['POST']) 
+def addFavourite():
+    responseData = ""
+    # get the request data
+    data = json.loads(request.data.decode('utf-8'))
+    # create job
+    new_job = Job(id=data['id'], company=data['company'], imgUrl=data['img'], title=data['title'], location=data['location'], jobType=data['type'], description=data['description'])
+
+    # check if job is already favourited
+    job = Job.query.filter_by(id=data['id']).first()
+    if job != None:
+        responseData = {"message": "Already favourited!"}
+    else: 
+        responseData = {"message": data['id']}
+        # add and commit changes to database
+        db.session.add(new_job)
+        db.session.commit()
+
+    # response = app.response_class(response=json.dumps(responseData), status=200, mimetype='application/json')
+    return responseData, 200
 
 
 # POST (Forms)

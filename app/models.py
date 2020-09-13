@@ -1,11 +1,15 @@
 from app import db
 
 # Models
-class Task(db.Model):
-    __tablename__ = 'tasks'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    description = db.Column(db.String(512))
+class Job(db.Model):
+    __tablename__ = 'jobs'
+    id = db.Column(db.String(256), primary_key=True)
+    company = db.Column(db.String(256))
+    imgUrl = db.Column(db.String(256))
+    title = db.Column(db.String(256))
+    location = db.Column(db.String(256))
+    jobType = db.Column(db.String(256))
+    description = db.Column(db.String(1000))
 
     def __repr__(self):
-        return '<Task %r - %r>' % self.name, self.description
+        return f'<Job {self.company} - {self.imgUrl} - {self.title} - {self.location} - {self.jobType} - {self.description}>'

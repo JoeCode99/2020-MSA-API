@@ -1,81 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Bootstrap -->
+    <!-- bootstrap import -->
     <link
       rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
       crossorigin="anonymous"
     />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
   </head>
-  <body>
-    {% extends "base.html" %} {% block body %}
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Task</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for task in tasks %}
-        <tr>
-          <th scope="row">{{loop.index}}</th>
-          <td>{{task.name}}</td>
-          <td>
-            <a href="/task/{{task.id}}"
-              ><button type="button" class="btn btn-primary">View</button></a
-            >
-            <button
-              type="button"
-              data-item-id="{{task.id}}"
-              data-toggle="modal"
-              data-target="#deleteModal"
-              class="btn btn-danger"
-              onclick="{setDeleteId(this)}"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% include "modals.html" %} {% endblock %}
+  <body style="background-color: #343a40 !important" onload="getQuote()">
+    {% include "header.html" %}
+    <div class="text-center">
+      <div class="container">
+        <br />
+        <h1 class="cover-heading text-white">Find Software Jobs</h1>
+        <!-- This is filled on page load -->
+        <p class="lead text-white" id="quote"></p>
+        <p class="lead text-white text-right" id="author"></p>
+        <a
+          class="lead text-white text-decoration-none"
+          style="font-size: 15px"
+          id="refresh"
+          href="/"
+        ></a>
+      </div>
+    </div>
 
     <!-- Javascript support for bootstrap -->
     <script
-      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
       crossorigin="anonymous"
     ></script>
     <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
       crossorigin="anonymous"
     ></script>
     <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
       crossorigin="anonymous"
     ></script>
-
     <script>
-      var deleteId = 0;
-      function setDeleteId(event) {
-        deleteId = event.dataset.itemId;
-      }
-      function deleteTask(id) {
-        fetch('/task/' + id, {
-          method: 'DELETE',
-        })
-          .then(() => window.location.reload())
-          .catch((error) => console.log('Something went wrong: ' + error));
+      //function to get a random programming quote
+      async function getQuote() {
+        const quoteFill = document.getElementById('quote');
+        const authorFill = document.getElementById('author');
+        const result = await fetch(
+          'https://programming-quotes-api.herokuapp.com/quotes/random'
+        ).then((res) => res.json());
+        quoteFill.innerHTML = `"${result.en}"`;
+        authorFill.innerHTML = `- ${result.author}`;
+        document.getElementById('refresh').innerHTML = '(refresh for more)';
       }
     </script>
   </body>
