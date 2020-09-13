@@ -31,4 +31,4 @@ jobs:
       with:
         app-name: 'msa-api'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_1fe471f7722f4c7b9a9b087f52f4c833 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_ca7c812d61f74d779113835e61de3946 }}
