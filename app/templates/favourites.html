@@ -12,21 +12,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
   </head>
-  <body style="background-color: #343a40 !important">
+  <body style="background-color: #343a40 !important" onLoad='setPlaceholder()'>
     {% include "header.html" %}
     <div class="text-center">
       <div class="container">
         <h1 class="cover-heading text-white text-left">Your Favourites</h1>
-        <form class="text-left w-50">
-          <div class="input-group">
-            <input type="text" class="form-control" id="location" style="margin-right: 10px !important" placeholder="Location">
-            <input type="text" class="form-control" id="jobtitle" style="margin-right: 10px !important" placeholder="Job title">
-            <span class="input-group-btn">
-              <!-- query API with the following paramters -->
-              <button type="button" class="btn btn-info">Submit</button>
-            </span>
-          </div>
-        </form>
         <!-- table to display favourites -->
         <table class="table table-striped text-white" style="margin-top: 10px !important" id="jobstable">
           <thead>
@@ -70,13 +60,33 @@
     ></script>
 
     <script>
+      // set table placeholder if it is empty
+      let placeholder = false;
+      function setPlaceholder() {
+        const table = document.getElementById('jobstable');
+        if (table.rows.length === 1) {
+          placeholder = true;
+          let row = jobstable.insertRow(1);
+          var cell1 = row.insertCell(0);
+          var cell2 = row.insertCell(1);
+          var cell3 = row.insertCell(2);
+          var cell4 = row.insertCell(3);
+          cell1.innerHTML = "Add some favourites!";
+          cell2.innerHTML = " ";
+          cell3.innerHTML = " ";
+          cell4.innerHTML = " ";
+        } else {
+          table.deleteRow(table.rows.length);
+          placeholder = false;
+        }
+      }
+
       // populate modal with data on button click
       let currFav = 0;
       async function handleView(element) {
         currFav = element.id;
 
         const res = await fetch(`/favourites/${element.id}`).then(resp => resp.json());
-        console.log(res);
 
         document.getElementById('viewFavouriteModalLabel').innerHTML = res.company;
         document.getElementById('favcompanyimg').src = res.img;
@@ -88,6 +98,24 @@
         document.getElementById("favnotes").value = res.notes;
       }
 
+      // handle updating the notes of a favourite job
+      async function handleSave() {
+        const res = await fetch(`/save/${currFav}`, {
+          method: 'POST',
+          body: JSON.stringify({'notes': document.getElementById("favnotes").value})
+        }).then(resp => resp.json());
+
+        window.alert(res.message === "Success!" ? "Saved successfully!" : "An error occurred, please try again!");
+      }
+
+      // handle removing a favourite job
+      async function handleRemove() {
+        const res = await fetch(`/save/${currFav}`, {
+          method: 'DELETE'
+        }).then(resp => resp.json());
+
+        location.reload();
+      }
     </script>
   </body>
 </html>

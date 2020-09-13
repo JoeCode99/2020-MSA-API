@@ -21,12 +21,20 @@ def favouritesLoad():
     jobs = Job.query.all()
     return render_template("favourites.html", jobs=jobs)
 
-@app.route('/save/<string:id>')
-def saveFavourite():
-    Job.query.filter_by(id=id).first().update({'notes': "Hello"})
-    return 
+@app.route('/save/<string:id>', methods=['POST', 'DELETE'])
+def saveFavourite(id):
+    job = Job.query.filter_by(id=id).first()
+    if (request.method == 'POST'): 
+        data = json.loads(request.data.decode('utf-8'))
+        job.notes = data['notes']
+        db.session.add(job)
+        db.session.commit()
+    elif (request.method == 'DELETE'):
+        db.session.delete(job)
+        db.session.commit()
+    return {"message": "Success!"}, 200
 
-@app.route('/favourites/<string:id>')
+@app.route('/favourites/<string:id>', methods=['GET'])
 def findFav(id):
     job = Job.query.filter_by(id=id).first()
     return {'company': job.company, 'img': job.imgUrl, 'title': job.title, 'location': job.location, 'jobType': job.jobType, 'description': job.description, 'url': job.url, 'notes': job.notes}, 200
