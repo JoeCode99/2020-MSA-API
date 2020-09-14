@@ -120,7 +120,7 @@
 
       // handle updating the notes of a favourite job
       async function handleSave() {
-        const res = await fetch(`/save/${currFav}`, {
+        const res = await fetch(`/update/${currFav}`, {
           method: 'POST',
           body: JSON.stringify({
             notes: document.getElementById('favnotes').value,
@@ -136,7 +136,7 @@
 
       // handle removing a favourite job
       async function handleRemove() {
-        const res = await fetch(`/save/${currFav}`, {
+        const res = await fetch(`/update/${currFav}`, {
           method: 'DELETE',
         }).then((resp) => resp.json());
 

@@ -1,9 +1,7 @@
 from app import db
 import html
 
-# Models
-
-
+# Job model
 class Job(db.Model):
     __tablename__ = 'jobs'
     id = db.Column(db.String(256), primary_key=True)
