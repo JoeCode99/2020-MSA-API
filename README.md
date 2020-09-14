@@ -13,7 +13,9 @@ Reload the page to see new random quotes for inspiration!
 
 #### Jobs Page
 
-The jobs page consists of two main sections: 1. Search criteria 2. Job List
+The jobs page consists of two main sections: 
+    1. Search criteria 
+    2. Job List
 
 The search criteria allows users to filter jobs by both their location (i.e. Zurich) and job title (i.e. node). Clicking on submit will return a filtered list of jobs.
 
@@ -31,12 +33,20 @@ The modal not only displays more information about the selected job, but it also
 
 ### Running the Project
 
-In windows, simply run the following in terminal: 1. `py -m venv venv` 2. `venv/Scripts/activate` 3. `flask run`
+In windows, simply run the following in terminal: 
+    1. `py -m venv venv` 
+    2. `venv/Scripts/activate` 
+    3. `flask run`
 
-If any isues arise, `pip install` the following packages: 1. os 2. urllib 3. flask 4. flask_sqlalchemy 5. sqlalchemy
+If any isues arise, `pip install` the following packages: 
+    1. os 
+    2. urllib 
+    3. flask 
+    4. flask_sqlalchemy 
+    5. sqlalchemy
 
 ### Tech Stack
 
 The tech stack consists of the following:
-_ Backend: Python (with Flask and SQLAlchemy - handles routing and database CRUD operations)
-_ Frontend: HTML, Bootstrap, and JavaScript
+ *Backend: Python (with Flask and SQLAlchemy - handles routing and database CRUD operations)
+ *Frontend: HTML, Bootstrap, and JavaScript
