@@ -2,8 +2,8 @@
 
 Access the live webpage: https://msa-api.azurewebsites.net/
 
-### Project Description
-
+## Project Description
+***
 CoderFinder is a website where software developers can search, favourite, and write notes about available jobs. The site is relatively simple, consisting of three main pages.
 
 #### Home Page
@@ -31,8 +31,8 @@ The favourites page will display all of your favourited jobs. The table appears 
 
 The modal not only displays more information about the selected job, but it also provides a notes section where users can write any information they like about that particular job. The written notes can be saved by clicking the `Save` button, and if the user no longer wishes to have that job favourited, they can select the `Delete` button (which will open another modal confirming the user's action).
 
-### Running the Project
-
+## Running the Project
+***
 In windows, simply run the following in terminal: 
 1. `py -m venv venv` 
 1. `venv/Scripts/activate` 
@@ -45,8 +45,8 @@ If any isues arise, `pip install` the following packages:
 1. flask_sqlalchemy 
 1. sqlalchemy
 
-### Tech Stack
-
+## Tech Stack
+***
 The tech stack consists of the following:
 * Backend: Python (with Flask and SQLAlchemy - handles routing and database CRUD operations)
 * Frontend: HTML, Bootstrap, and JavaScript
