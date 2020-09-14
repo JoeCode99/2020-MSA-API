@@ -31,7 +31,7 @@
               <th scope="col" class="text-white">Actions</th>
             </tr>
           </thead>
-          <!-- table populated by JS script -->
+          <!-- populate table with injected jobs list -->
           <tbody>
             {% for job in jobs %}
             <tr>
@@ -78,6 +78,8 @@
       let placeholder = false;
       function setPlaceholder() {
         const table = document.getElementById('jobstable');
+
+        // show a placeholder if the table body is empty
         if (table.rows.length === 1) {
           placeholder = true;
           let row = jobstable.insertRow(1);
@@ -126,7 +128,7 @@
             notes: document.getElementById('favnotes').value,
           }),
         }).then((resp) => resp.json());
-
+        // display whether the call was successful or not
         window.alert(
           res.message === 'Success!'
             ? 'Saved successfully!'
@@ -139,7 +141,7 @@
         const res = await fetch(`/update/${currFav}`, {
           method: 'DELETE',
         }).then((resp) => resp.json());
-
+        // reload the page to update the UI
         location.reload();
       }
     </script>

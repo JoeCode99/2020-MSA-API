@@ -105,6 +105,7 @@
         cell3.innerHTML = 'Loading...';
         cell4.innerHTML = 'Loading...';
 
+        // call the right API depending on user input
         if (language.length == 0 && location.length == 0) {
           res = await fetch(
             'https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json'
@@ -148,6 +149,7 @@
           cell4.appendChild(button);
         }
 
+        // remove the row that says "loading..."
         tablesize = jobstable.rows.length;
         jobstable.deleteRow(--tablesize);
 
@@ -215,6 +217,7 @@
           body: JSON.stringify(data),
         }).then((resp) => resp.json());
 
+        // check if the job has already been added!
         if (addStatus.message === 'Already favourited!') {
           window.alert(addStatus.message);
         } else {

@@ -18,7 +18,7 @@
       <div class="container">
         <br />
         <h1 class="cover-heading text-white">Find Software Jobs</h1>
-        <!-- This is filled on page load -->
+        <!-- Quote information is filled on page load -->
         <p class="lead text-white" id="quote"></p>
         <p class="lead text-white text-right" id="author"></p>
         <a
@@ -54,6 +54,8 @@
         const result = await fetch(
           'https://programming-quotes-api.herokuapp.com/quotes/random'
         ).then((res) => res.json());
+
+        // set document elements
         quoteFill.innerHTML = `"${result.en}"`;
         authorFill.innerHTML = `- ${result.author}`;
         document.getElementById('refresh').innerHTML = '(refresh for more)';
