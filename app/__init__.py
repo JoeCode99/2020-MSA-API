@@ -20,7 +20,7 @@ db = SQLAlchemy(app)
 
 from app import routes
 
-#setup the entire DB
+# Setup the entire DB
 @app.before_first_request
 def create_tables():
     from app.models import Job
