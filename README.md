@@ -35,15 +35,15 @@ The modal not only displays more information about the selected job, but it also
 
 In windows, simply run the following in terminal: 
     1. `py -m venv venv` 
-    2. `venv/Scripts/activate` 
-    3. `flask run`
+    1. `venv/Scripts/activate` 
+    1. `flask run`
 
 If any isues arise, `pip install` the following packages: 
     1. os 
-    2. urllib 
-    3. flask 
-    4. flask_sqlalchemy 
-    5. sqlalchemy
+    1. urllib 
+    1. flask 
+    1. flask_sqlalchemy 
+    1. sqlalchemy
 
 ### Tech Stack
 
