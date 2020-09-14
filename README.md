@@ -38,11 +38,11 @@ In windows, simply run the following in terminal:
 1. `flask run`
 
 If any isues arise, `pip install` the following packages: 
-1. os 
-1. urllib 
-1. flask 
-1. flask_sqlalchemy 
-1. sqlalchemy
+* os 
+* urllib 
+* flask 
+* flask_sqlalchemy 
+* sqlalchemy
 
 ## Tech Stack
 
